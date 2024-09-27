@@ -1,16 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { CoreModule } from './core/core.module';
-import { FeaturesModule } from './features/features.module';
-import { SharedModule } from './shared/shared.module';
+import { NavbarComponent } from './core/layout/navbar/navbar.component';
+import { FooterComponent } from "./core/layout/footer/footer.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  template: `
+    <div class="w-full h-fit min-h-screen flex justify-center bg-black text-white">
+      <div class="max-w-7xl w-full">
+        <app-navbar />
+        <div class="flex justify-center w-full">
+            <router-outlet />
+        </div>
+        <app-footer />
+      </div>
+    </div>
+  `
 })
+
 export class AppComponent {
   title = 'startup-angular';
 }
