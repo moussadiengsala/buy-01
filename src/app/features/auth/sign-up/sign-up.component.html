@@ -1,16 +1,122 @@
-<h2>Sign Up</h2>
-<form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+<div class="w-full p-3">
+    <h2 class="text-xl font-bold capitalize tablet:text-2xl desktop:text-4xl tablet:max-w-lg desktop:max-w-4xl">
+        <span>Sign Up</span>
+    </h2>
 
-    <label for="email">Email</label>
-    <input id="email" type="email" formControlName="email" required class="text-black" />
+    <div class="px-4 py-7 bg-zinc-900 mx-auto w-full max-w-md min-w-sm rounded-md">
+        <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8 justify-center items-center w-full">
+            
+                <div class="w-full flex gap-4 flex-col">
+                    <label>Role</label>
+                    <div class="grid grid-cols-2 gap-2 w-full">
+                        
+                        <div class="h-12 flex">
+                            <input type="radio" id="client" value="client" formControlName="role" (change)="onRoleChange($event)" class="hidden" checked>
+                            <label for="client" class="w-full h-full rounded-md p-2 flex justify-between items-center cursor-pointer hover:bg-sky-500/5"
+                                [ngClass]="{'bg-sky-500/10 border-2 border-sky-500': !isSeller}">
+                                <span>Client</span>
+                                <span [ngClass]="{'pi pi-check': !isSeller}"></span>
+                            </label>
+                        </div>
+            
+                        <div class="h-12 flex"
+                            [ngClass]="{'bg-sky-500/10 border-2 border-sky-500': isSeller}" >
+                                <input type="radio" id="seller" value="seller" formControlName="role" (change)="onRoleChange($event)" class="hidden">
+                                <label for="seller" class="w-full h-full p-2 rounded-md flex justify-between items-center cursor-pointer hover:bg-sky-500/5"
+                                    [ngClass]="{'bg-sky-500/10 border-2 border-sky-500': isSeller}">
+                                    <span>Seller</span>
+                                    <span [ngClass]="{'pi pi-check': isSeller}"></span>
+                                </label>
+                        </div>
+                    </div>
+                </div>
+            
 
-    <label for="password">Password</label>
-    <input id="password" type="password" formControlName="password" required class="text-black"/>
 
-    <label for="role">Role</label>
-    <select id="role" formControlName="role" class="text-black">
-        <option value="client">Client</option>
-        <option value="seller">Seller</option>
-    </select>
-    <button type="submit">Register</button>
-</form>
+            <div class="w-full flex gap-2 flex-col">
+                <label for="name">Name</label>
+                <input id="name" type="text" formControlName="name" class="h-12 w-full p-2 border-slate-500/10 border-2"/>
+                <small
+                    *ngIf="name.invalid && (name.dirty || name.touched)"
+                    class="block p-error"
+                >
+                    <div *ngIf="name.errors?.['required']">Name is required.</div>
+                </small>
+            </div>
+    
+            <div class="w-full flex gap-2 flex-col">
+                <label for="email">Email</label>
+                <input id="email" type="email" formControlName="email" class="h-12 w-full p-2 border-slate-500/10 border-2"/>
+                <small
+                    *ngIf="email.invalid && (email.dirty || email.touched)"
+                    class="block p-error"
+                >
+                    <div *ngIf="email.errors?.['required']">Email is required.</div>
+                    <div *ngIf="email.errors?.['email']">Email should be valid</div>
+                </small>
+            </div>
+    
+            <div class="w-full flex gap-2 flex-col">
+                <label for="password">Password</label>
+                <p-password [toggleMask]="true" formControlName="password" inputStyleClass="h-12 p-2 w-full border-slate-500/10 border-2" styleClass="w-full" />
+                <small
+                    *ngIf="password.invalid && (password.dirty || password.touched)"
+                    class="block p-error"
+                >
+                    <div *ngIf="password.errors?.['required']">Password is required.</div>
+                </small>
+            </div>
+    
+    
+            <div *ngIf="isSeller" class="w-full flex gap-2 flex-col">
+                <label for="avatar">Avatar</label>
+                <input type="file" id="avatar" (change)="onAvatarSelected($event)" class="hidden" #fileInput />
+                <button type="button" (click)="fileInput.click()" class="border-2 border-slate-500/10 w-full p-2 text-left rounded-md">
+                    {{ avatar ? avatar.name : 'Choose an Avatar' }}
+                </button>
+            </div>
+    
+            <button type="submit" class="bg-blue-500 w-full rounded-md text-white text-lg font-bold p-2" [disabled]="loading || signUpForm.invalid">
+                <span *ngIf="!loading">Sign Up</span>
+                <span *ngIf="loading">Signing Up...</span>
+            </button>
+        </form>
+    
+        <div class="w-full h-1 bg-slate-500/10 my-7"></div>
+    
+        <div class="flex space-x-2">
+            <span>
+                Already have an account?
+            </span>
+            <a routerLink="/login" class="font-bold">
+                Login
+            </a>
+        </div>
+    
+        <div *ngIf="messageAction" class="p-4 rounded-md" 
+            [ngClass]="{
+                'bg-red-100 border-red-400 text-red-700': messageAction.severity === 'error',
+                'bg-green-100 border-green-400 text-green-700': messageAction.severity === 'success',
+                'bg-yellow-100 border-yellow-400 text-yellow-700': messageAction.severity === 'warn',
+                'bg-blue-100 border-blue-400 text-blue-700': messageAction.severity === 'info'
+            }"
+            role="alert"
+        >
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i *ngIf="messageAction.severity === 'success'" class="pi pi-check-circle text-green-600"></i>
+                    <i *ngIf="messageAction.severity === 'error'" class="pi pi-times-circle text-red-600"></i>
+                    <i *ngIf="messageAction.severity === 'warn'" class="pi pi-exclamation-triangle text-yellow-600"></i>
+                    <i *ngIf="messageAction.severity === 'info'" class="pi pi-info-circle text-blue-600"></i>
+                </div>
+                <div class="ml-3">
+                    <h4 class="font-bold">{{ messageAction.summary }}</h4>
+                    <p class="mt-1">{{ messageAction.detail }}</p>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</div>
+
+

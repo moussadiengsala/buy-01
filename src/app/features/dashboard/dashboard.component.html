@@ -1,0 +1,134 @@
+<div class="flex flex-col w-full p-3">
+    <h2 class="text-xl font-bold capitalize tablet:text-2xl desktop:text-4xl tablet:max-w-lg desktop:max-w-4xl">
+        <span>Customer Overview</span>
+    </h2>
+
+    <div>
+        <div>
+
+            <div>
+                <p-avatar 
+                    icon="pi pi-user" 
+                    styleClass="mr-2" 
+                    [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" 
+                    shape="circle" />
+                <span>Jhon Doe</span>
+                <span>moisedieng&#64;gmail.com</span>
+            </div>
+
+            <div>
+                <span>12</span>
+                <span>Products</span>
+            </div>
+
+        </div>
+        <div>
+            <div>
+                <h3 class="text-xl font-bold capitalize tablet:text-2xl desktop:text-4xl tablet:max-w-lg desktop:max-w-4xl">
+                    <span>Products</span>
+                </h3>
+                <button class="bg-sky-500 px-5 py-2 font-bold rounded-sm">Add Products</button>
+            </div>
+            <div>
+
+                <div class="card">
+                    <p-table [value]="products" [tableStyle]="{'min-width': '60rem'}" ngSkipHydration>
+                        <ng-template pTemplate="caption">
+                            <div class="flex align-items-center justify-content-between">
+                                Products
+                                <p-button icon="pi pi-refresh"></p-button>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Edit</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-product>
+                            
+                            <tr>
+                                <td><img [src]="product.media[0].imagePath" alt="{{ product.name }}" [alt]="product.name" width="100" class="shadow-4" /></td>
+                                <td>{{product.name}}</td>
+                                <td>{{product.price | currency:'USD'}}</td>
+                                <td>{{product.description}}</td>
+                                <td>{{ product.quantity }}</td>
+                                <td>
+                                    <div class="card flex justify-content-center">
+                                        <div class="flex justify-content-center relative">
+                                            <p-button (onClick)="toggleMenu($event, product.id)" icon="pi pi-ellipsis-v"></p-button>
+                                            <!-- Hardcoded menu, toggled based on isDisplayMenu -->
+                                            <div *ngIf="isDisplayMenu[product.id]" class="absolute bg-white shadow-lg border rounded w-32 z-[99] -top-full right-full">
+                                            <ul class="list-none p-2">
+                                                <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer" (click)="handleEdit(product)">Edit</li>
+                                                <li class="py-2 px-4 hover:bg-gray-200 cursor-pointer" (click)="handleDelete(product.id)">Delete</li>
+                                            </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <div class="flex align-items-center justify-content-between">
+                                In total there are {{ products ? products.length : 0 }} products.
+                            </div>
+                        </ng-template>
+                    </p-table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+ 
+
+<!-- Edit Product Popup -->
+<div *ngIf="selectedEditProduct" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-5 rounded shadow-lg w-96 text-black">
+      <h3 class="text-xl font-bold mb-4">Edit Product</h3>
+
+      <form (ngSubmit)="saveProduct()">
+        <div class="mb-3">
+          <label for="productName" class="block text-sm font-medium">Product Name</label>
+          <input [(ngModel)]="selectedEditProduct.name" name="productName" type="text" class="mt-1 block w-full border p-2 rounded" />
+        </div>
+        <div class="mb-3">
+          <label for="productPrice" class="block text-sm font-medium">Price</label>
+          <input [(ngModel)]="selectedEditProduct.price" name="productPrice" type="number" class="mt-1 block w-full border p-2 rounded" />
+        </div>
+        <div class="mb-3">
+          <label for="productDescription" class="block text-sm font-medium">Description</label>
+          <textarea [(ngModel)]="selectedEditProduct.description" name="productDescription" class="mt-1 block w-full border p-2 rounded"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="productQuantity" class="block text-sm font-medium">Quantity</label>
+          <input [(ngModel)]="selectedEditProduct.quantity" name="productQuantity" type="number" class="mt-1 block w-full border p-2 rounded" />
+        </div>
+
+        <div class="flex justify-end">
+          <button type="button" class="bg-gray-400 px-4 py-2 rounded mr-2" (click)="closeEditPopup()">Cancel</button>
+          <button type="submit" class="bg-blue-500 px-4 py-2 rounded text-white">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Confirmation Delete Popup -->
+<div *ngIf="isConfirmDeleteVisible && selectedDeleteProduct" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-5 rounded shadow-lg w-96 text-black">
+      <h3 class="text-xl font-bold mb-4">Confirm Deletion</h3>
+      <p>Are you sure you want to delete "{{ selectedDeleteProduct.name }}"?</p>
+      <div class="flex justify-end">
+        <button type="button" class="bg-gray-400 px-4 py-2 rounded mr-2" (click)="closeDeletePopup()">Cancel</button>
+        <button type="button" class="bg-red-500 px-4 py-2 rounded text-white" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+</div>
+  

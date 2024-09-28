@@ -7,11 +7,23 @@ import { NotFoundComponent } from './features/error/not-found/not-found.componen
 import { ErrorComponent } from './features/error/error/error.component';
 import { AuthGuard } from './core/services/auth/auth-guard.guard';
 import { HomeComponent } from './features/home/home/home.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { MediaManagementComponent } from './features/media-management/media-management.component';
 
 export const routes: Routes = [
     {
       path: '', 
       component: HomeComponent
+    },
+    { 
+      path: 'dashboard', 
+      component: DashboardComponent,
+      canActivate: [AuthGuard] 
+    },
+    { 
+      path: 'media-management', 
+      component: MediaManagementComponent,
+      canActivate: [AuthGuard] 
     },
     {
       path: 'auth/sign-in', 
